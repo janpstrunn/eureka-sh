@@ -6,7 +6,7 @@ It's a CLI tool that tries to make the experience of jotting ideas down as frict
 
 ## Requirements
 
-- You will need a remote git repository in order to use `eureka-sh`
+- You will need a remote git repository in order to use `eureka.sh`
 
 ## Features
 
@@ -23,7 +23,7 @@ It's a CLI tool that tries to make the experience of jotting ideas down as frict
 
 ## Usage
 
-The first time you use `eureka.sh` it's required to use the `-s` option to setup the configuration. The configuration file lives at $HOME/.local/share/eureka.conf by default.
+The first time you use `eureka.sh` it's required to use the `-s` option to setup the configuration. The configuration file lives at `$HOME/.local/share/eureka.conf` by default.
 After setting the configuration, you can use the script with no option to if you want to add an idea without an editor.
 
 ```
