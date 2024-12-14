@@ -1,6 +1,6 @@
 # eureka-sh
 
-`eureka.sh` is a fork of [eureka](https://github.com/simeg/eureka) written in shell, and with additional features.
+`eureka.sh` is a fork of [eureka](https://github.com/simeg/eureka) by Simon Egersand written in shell, and with additional features.
 
 It's a CLI tool that tries to make the experience of jotting ideas down as friction-less as possible right from the terminal. It mainly integrates with git, committing and pushing ideas to a remote git repository.
 
