@@ -5,6 +5,10 @@ pager=${PAGER:-less}
 
 config="$HOME/.local/share/eureka.conf"
 
+if [ ! -f "$config" ]; then
+  echo "$(tput setaf 196)The configuration file isn't set!$(tput sgr0)"
+fi
+
 function setup() {
 	if [ ! -f "$config" ]; then
     touch "$HOME/.local/share/eureka.conf"
