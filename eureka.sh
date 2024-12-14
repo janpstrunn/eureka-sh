@@ -140,14 +140,18 @@ function eureka() {
 	exit 0
 }
 
-if [ "$1" = "-v" ] || [ "$1" = "--view" ]; then
-	preview
-# elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-# 	help
-elif [ "$1" = "" ]; then
+if [ "$1" = "" ]; then
 	eureka
+elif [ "$1" = "-v" ] || [ "$1" = "--view" ]; then
+	preview
+elif [ "$1" = "-p" ] || [ "$1" = "--pull" ]; then
+	pull
+elif [ "$1" = "-f" ] || [ "$1" = "--fetch" ]; then
+	fetch
 elif [ "$1" = "-e" ] || [ "$1" = "--edit" ]; then
 	editor
+elif [ "$1" = "-t" ] || [ "$1" = "--target" ]; then
+  target
 elif [ "$1" = "-s" ] || [ "$1" = "--setup" ]; then
   setup
 fi
