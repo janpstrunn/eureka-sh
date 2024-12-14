@@ -54,6 +54,10 @@ function pull() {
   git -C "$path" pull origin main
 }
 
+function fetch() {
+  git -C "$path" fetch origin main
+}
+
 function preview() {
   "$pager" "$path/README.md"
 }
