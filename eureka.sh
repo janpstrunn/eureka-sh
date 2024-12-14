@@ -9,8 +9,6 @@ function setup() {
 	if [ ! -f "$config" ]; then
     touch "$HOME/.local/share/eureka.conf"
 
-    # Set remote repo
-
 		echo "$(tput setaf 87)> Insert your remote repo address (e.g. https://github.com/$USER/eureka/$(tput sgr0)"
     read -p ">> " irepo
 
@@ -24,8 +22,6 @@ function setup() {
     else
       echo "$(tput setaf 196)> An error occured! Try cloning manually$(tput sgr0)"
     fi
-
-    # Set absolute path
 
 		while true; do
       echo "$(tput setaf 87)> Insert the absolute path to your repo (e.g. /home/$USER/eureka/$(tput sgr0)"
