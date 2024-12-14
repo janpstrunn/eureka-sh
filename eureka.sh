@@ -9,6 +9,7 @@ if [ ! -f "$config" ]; then
   echo "$(tput setaf 196)The configuration file isn't set!$(tput sgr0)"
 fi
 
+
 function setup() {
 	if [ ! -f "$config" ]; then
     touch "$HOME/.local/share/eureka.conf"
@@ -73,6 +74,33 @@ function fetch() {
 
 function preview() {
   "$pager" "$path/README.md"
+}
+
+function target() {
+  path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
+  if [ ! -d "$path" ]; then
+    echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
+    exit 1
+  fi
+	echo "$(tput setaf 87)> Available files:$(tput sgr0)"
+  find "$path" -type f -name '*.md' -printf '%P\n' | awk -F. '{print $1}'
+	echo "$(tput setaf 87)> Name your file$(tput sgr0)"
+	read -p ">> " filename
+	echo "$(tput setaf 87)> Summary$(tput sgr0)"
+	read -p ">> " idea
+  if [ ! -f "$path/$filename.md" ]; then
+    echo "$(tput setaf 196)> The $filename file doesn't exist!$(tput sgr0)"
+    echo "$(tput setaf 87)> Do you want to create one now? (y/n)$(tput sgr0)"
+    read -p ">> " create
+    if [ "$create" = "y" ]; then
+      echo "$(tput setaf 87)> Creating one now...$(tput sgr0)"
+      touch "$path/$filename.md"
+      echo "$(tput setaf 82)> $filename.md created!$(tput sgr0)"
+    fi
+  fi
+	"$editor" "$path/$filename.md"
+  dogit
+	exit 0
 }
 
 function editor() {
