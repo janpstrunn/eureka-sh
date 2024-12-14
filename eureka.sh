@@ -91,6 +91,19 @@ function eureka() {
     exit 1
   fi
   getidea
+  if [ ! -f "$path/README.md" ]; then
+    echo "$(tput setaf 196)> The README file doesn't exist!$(tput sgr0)"
+    echo "$(tput setaf 87)> Do you want to create one now? (y/n)$(tput sgr0)"
+    read -p ">> " create
+    if [ "$create" = "y" ]; then
+      echo "$(tput setaf 87)> Creating one now...$(tput sgr0)"
+      touch "$path/README.md"
+      echo "# Ideas" > "$path/README.md"
+      echo "" >> "$path/README.md"
+      echo "$(tput setaf 82)> README.md created!$(tput sgr0)"
+    fi
+  fi
+  sed -i "2a - $ideacontent" "$path/README.md"
   dogit
 	exit 0
 }
