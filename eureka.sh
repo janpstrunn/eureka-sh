@@ -59,7 +59,6 @@ function preview() {
 }
 
 function editor() {
-
   path=$(grep "path" "$config" | awk -F '=' '{print $2}')
 	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
 	read -p ">> " idea
@@ -69,3 +68,28 @@ function editor() {
 	git -C "$path" push origin main
 	exit 0
 }
+
+function eureka() {
+  path=$(grep "path" "$config" | awk -F '=' '{print $2}')
+	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
+	read -p ">> " idea
+	echo "$(tput setaf 87)> Idea Content$(tput sgr0)"
+  read -p ">> " ideacontent
+  echo "$ideacontent" >> "$path/README.md"
+	git -C "$path" add .
+	git -C "$path" commit -m "$idea"
+	git -C "$path" push origin main
+	exit 0
+}
+
+if [ "$1" = "-v" ] || [ "$1" = "--view" ]; then
+	preview
+# elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+# 	help
+elif [ "$1" = "" ]; then
+	eureka
+elif [ "$1" = "-e" ] || [ "$1" = "--edit" ]; then
+	editor
+elif [ "$1" = "-s" ] || [ "$1" = "--setup" ]; then
+  setup
+fi
