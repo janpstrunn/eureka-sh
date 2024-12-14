@@ -8,7 +8,6 @@ function setup() {
 
 		echo "$(tput setaf 87)> Insert your remote repo address (e.g. https://github.com/$USER/eureka/$(tput sgr0)"
     read -p ">> " irepo
-		echo "repo = $irepo" > "$config" && echo "$(tput setaf 82)> The provided repo address has been saved to $config$(tput sgr0)"
 
 		echo "$(tput setaf 87)> Select the directory you want to clone your repo to (e.g. /home/$USER/)$(tput sgr0)"
 		echo "$(tput setaf 87)> The result will be: /home/$USER/your-repo-name$(tput sgr0)"
