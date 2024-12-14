@@ -80,27 +80,18 @@ function editor() {
 	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
 	read -p ">> " idea
 	"$editor" "$path/README.md"
-	git -C "$path" add .
-	git -C "$path" commit -m "$idea"
-	git -C "$path" push origin main
+  dogit
 	exit 0
 }
 
 function eureka() {
-  path=$(grep "path" "$config" | awk -F '=' '{print $2}')
-	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
-	read -p ">> " idea
-	echo "$(tput setaf 87)> Idea Content$(tput sgr0)"
-  read -p ">> " ideacontent
-  echo "$ideacontent" >> "$path/README.md"
-	git -C "$path" add .
-	git -C "$path" commit -m "$idea"
-	git -C "$path" push origin main
   path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
   if [ ! -d "$path" ]; then
     echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
     exit 1
   fi
+  getidea
+  dogit
 	exit 0
 }
 
