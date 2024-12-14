@@ -50,6 +50,19 @@ function setup() {
 	fi
 }
 
+function getidea() {
+	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
+	read -p ">> " idea
+	echo "$(tput setaf 87)> Idea Content$(tput sgr0)"
+  read -p ">> " ideacontent
+}
+
+function dogit() {
+	git -C "$path" add .
+	git -C "$path" commit -m "$idea"
+	git -C "$path" push origin main
+}
+
 function pull() {
   git -C "$path" pull origin main
 }
