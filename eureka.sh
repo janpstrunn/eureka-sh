@@ -45,3 +45,6 @@ function setup() {
     fi
 	fi
 }
+function pull() {
+  git -C "$path" pull origin main
+}
