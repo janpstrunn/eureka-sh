@@ -9,6 +9,21 @@ if [ ! -f "$config" ]; then
   echo "$(tput setaf 196)The configuration file isn't set!$(tput sgr0)"
 fi
 
+function help() {
+	printf "
+	CLI tool to input and store your ideas without leaving the terminal\n
+	Usage: $0 [option]
+	Available options:
+  -e, --editor                   - Edit ideas using EDITOR (default:vi)
+	-f, --fetch                    - Fetch eureka repo
+	-h, --help                     - Display this message and exits
+	-s, --setup                    - Set configuration up
+	-p, --pull                     - Pull eureka repo
+  -t, --target                   - Edit a specified file
+  -v, --view                     - Preview ideas using PAGER (default:less)
+	"
+	exit 0
+}
 
 function setup() {
 	if [ ! -f "$config" ]; then
@@ -144,6 +159,8 @@ if [ "$1" = "" ]; then
 	eureka
 elif [ "$1" = "-v" ] || [ "$1" = "--view" ]; then
 	preview
+elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+	help
 elif [ "$1" = "-p" ] || [ "$1" = "--pull" ]; then
 	pull
 elif [ "$1" = "-f" ] || [ "$1" = "--fetch" ]; then
