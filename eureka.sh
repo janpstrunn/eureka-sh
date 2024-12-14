@@ -1,5 +1,9 @@
 #!/bin/env bash
+
+editor=${EDITOR:-vi}
+
 config="$HOME/.local/share/eureka.conf"
+
 function setup() {
 	if [ ! -f "$config" ]; then
     touch "$HOME/.local/share/eureka.conf"
@@ -44,6 +48,19 @@ function setup() {
     fi
 	fi
 }
+
 function pull() {
   git -C "$path" pull origin main
+}
+
+function editor() {
+
+  path=$(grep "path" "$config" | awk -F '=' '{print $2}')
+	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
+	read -p ">> " idea
+	"$editor" "$path/README.md"
+	git -C "$path" add .
+	git -C "$path" commit -m "$idea"
+	git -C "$path" push origin main
+	exit 0
 }
