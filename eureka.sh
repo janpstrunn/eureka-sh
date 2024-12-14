@@ -72,7 +72,7 @@ function preview() {
 }
 
 function editor() {
-  path=$(grep "path" "$config" | awk -F '=' '{print $2}')
+  path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
 	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
 	read -p ">> " idea
 	"$editor" "$path/README.md"
@@ -92,6 +92,7 @@ function eureka() {
 	git -C "$path" add .
 	git -C "$path" commit -m "$idea"
 	git -C "$path" push origin main
+  path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
 	exit 0
 }
 
