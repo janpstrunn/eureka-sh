@@ -1,6 +1,7 @@
 #!/bin/env bash
 
 editor=${EDITOR:-vi}
+pager=${PAGER:-less}
 
 config="$HOME/.local/share/eureka.conf"
 
@@ -51,6 +52,10 @@ function setup() {
 
 function pull() {
   git -C "$path" pull origin main
+}
+
+function preview() {
+  "$pager" "$path/README.md"
 }
 
 function editor() {
