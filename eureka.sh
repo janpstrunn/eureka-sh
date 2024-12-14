@@ -73,6 +73,10 @@ function preview() {
 
 function editor() {
   path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
+  if [ ! -d "$path" ]; then
+    echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
+    exit 1
+  fi
 	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
 	read -p ">> " idea
 	"$editor" "$path/README.md"
@@ -93,6 +97,10 @@ function eureka() {
 	git -C "$path" commit -m "$idea"
 	git -C "$path" push origin main
   path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
+  if [ ! -d "$path" ]; then
+    echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
+    exit 1
+  fi
 	exit 0
 }
 
