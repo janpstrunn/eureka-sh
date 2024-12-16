@@ -32,7 +32,7 @@ function setup() {
 		echo "$(tput setaf 87)> Insert your remote repo address (e.g. https://github.com/$USER/eureka/$(tput sgr0)"
     read -p ">> " irepo
 
-		echo "$(tput setaf 87)> Select the directory you want to clone your repo to (e.g. /home/$USER/)$(tput sgr0)"
+		echo "$(tput setaf 87)> Select the directory you want to clone your repo to (e.g. /home/$USER)$(tput sgr0)"
 		echo "$(tput setaf 87)> The result will be: /home/$USER/your-repo-name$(tput sgr0)"
     read -p ">> " clone
     echo "$(tput setaf 87)> Cloning your repo now...$(tput sgr0)"
@@ -44,12 +44,9 @@ function setup() {
     fi
 
 		while true; do
-      echo "$(tput setaf 87)> Insert the absolute path to your repo (e.g. /home/$USER/eureka/$(tput sgr0)"
-      read -p ">> " ipath
-      if [ ! -d "$ipath" ]; then
-        echo "$(tput setaf 87)> This isn't a directory!$(tput sgr0)"
-      fi
-      echo "path = $ipath" >> "$config" && echo "$(tput setaf 82)> The provided path has been saved to $config$(tput sgr0)"
+      echo "$(tput setaf 87)> Insert the name of your repo (e.g. eureka)$(tput sgr0)"
+      read -p ">> " iname
+      echo "path = $clone/$iname" >> "$config" && echo "$(tput setaf 82)> The provided path has been saved to $config$(tput sgr0)"
       exit 0
     done
 
