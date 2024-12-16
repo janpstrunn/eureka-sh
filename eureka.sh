@@ -87,16 +87,21 @@ function fetch() {
   git -C "$path" fetch origin main
 }
 
-function preview() {
-  "$pager" "$path/README.md"
-}
-
-function target() {
+function checkpath() {
   path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
   if [ ! -d "$path" ]; then
     echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
     exit 1
   fi
+}
+
+function preview() {
+  checkpath
+  "$pager" "$path/README.md"
+}
+
+function target() {
+  checkpath
 	echo "$(tput setaf 87)> Available files:$(tput sgr0)"
   find "$path" -type f -name '*.md' -printf '%P\n' | awk -F. '{print $1}'
 	echo "$(tput setaf 87)> Name your file$(tput sgr0)"
@@ -119,11 +124,7 @@ function target() {
 }
 
 function editor() {
-  path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
-  if [ ! -d "$path" ]; then
-    echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
-    exit 1
-  fi
+  checkpath
 	echo "$(tput setaf 87)> Idea Summary$(tput sgr0)"
 	read -p ">> " idea
 	"$editor" "$path/README.md"
@@ -132,11 +133,7 @@ function editor() {
 }
 
 function eureka() {
-  path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
-  if [ ! -d "$path" ]; then
-    echo "$(tput setaf 196)The path doesn't exist!$(tput sgr0)"
-    exit 1
-  fi
+  checkpath
   getidea
   if [ ! -f "$path/README.md" ]; then
     echo "$(tput setaf 196)> The README file doesn't exist!$(tput sgr0)"
@@ -146,7 +143,7 @@ function eureka() {
       echo "$(tput setaf 87)> Creating one now...$(tput sgr0)"
       touch "$path/README.md"
       echo "# Ideas" > "$path/README.md"
-      echo "" >> "$path/README.md"
+/     echo "" >> "$path/README.md"
       echo "$(tput setaf 82)> README.md created!$(tput sgr0)"
     fi
   fi
