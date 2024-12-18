@@ -103,6 +103,21 @@ function preview() {
   "$pager" "$path/README.md"
 }
 
+function checkfile() {
+  if [ ! -f "$path/README.md" ]; then
+    text "$RED" "> The README file doesn't exist!"
+    text "$BLUE" "> Do you want to create one now? (y/n)"
+    read -p ">> " create
+    if [ "$create" = "y" ]; then
+      text "$BLUE" "> Creating one now..."
+      touch "$path/README.md"
+      echo "# Ideas" > "$path/README.md"
+      echo "" >> "$path/README.md"
+      text "$GREEN" "> README.md created!"
+    fi
+  fi
+}
+
 function target() {
   checkpath
 	text "$BLUE" "> Available files:"
@@ -137,19 +152,8 @@ function editor() {
 
 function eureka() {
   checkpath
+  checkfile
   getidea
-  if [ ! -f "$path/README.md" ]; then
-    echo "$(tput setaf 196)> The README file doesn't exist!$(tput sgr0)"
-    echo "$(tput setaf 87)> Do you want to create one now? (y/n)$(tput sgr0)"
-    read -p ">> " create
-    if [ "$create" = "y" ]; then
-      echo "$(tput setaf 87)> Creating one now...$(tput sgr0)"
-      touch "$path/README.md"
-      echo "# Ideas" > "$path/README.md"
-/     echo "" >> "$path/README.md"
-      echo "$(tput setaf 82)> README.md created!$(tput sgr0)"
-    fi
-  fi
   sed -i "2a - $ideacontent" "$path/README.md"
   git_cmd
 	exit 0
