@@ -39,19 +39,23 @@ function private() {
 }
 
 function workspace() {
-  if [ "$PRIVATE_REPO" = true ]; then
-    path="$(grep "private" "$config" | awk -F ' = ' '{print $2}')"
-    text "$ORANGE" "Using private repo: $path"
-    if [ "$path" = "" ]; then
-      text "$RED" "The path doesn't exist!"
-      exit 1
-    fi
-  else
-    path="$(grep "remote_path" "$config" | awk -F ' = ' '{print $2}')"
-    text "$ORANGE" "Using remote repo: $path"
-    if [ "$path" = "" ]; then
-      text "$RED" "The path doesn't exist!"
-      exit 1
+  if [ -n "$path" ]; then
+    :
+  elif [ -z "$path" ]; then
+    if [ "$PRIVATE_REPO" = true ]; then
+      path="$(grep "private" "$config" | awk -F ' = ' '{print $2}')"
+      text "$ORANGE" "Using private repo: $path"
+      if [ "$path" = "" ]; then
+        text "$RED" "The path doesn't exist!"
+        exit 1
+      fi
+    else
+      path="$(grep "remote_path" "$config" | awk -F ' = ' '{print $2}')"
+      text "$ORANGE" "Using remote repo: $path"
+      if [ "$path" = "" ]; then
+        text "$RED" "The path doesn't exist!"
+        exit 1
+      fi
     fi
   fi
 }
@@ -134,9 +138,9 @@ function setup_private() {
 }
 
 function getidea() {
-	echo "${BLUE}> Idea Summary"
+	text "$BLUE" "> Idea Summary"
 	read -p ">> " idea
-	echo "${BLUE}> Idea Content"
+	text "$BLUE" "> Idea Content"
   read -p ">> " ideacontent
 }
 
@@ -159,24 +163,28 @@ function fetch() {
   git -C "$path" fetch origin main
 }
 
-function preview() {
-  check_remote_path
-  "$pager" "$path/README.md"
-}
-
 function checkfile() {
-  if [ ! -f "$path/README.md" ]; then
-    text "$RED" "> The README file doesn't exist!"
+  if [ -z "$filename" ]; then
+    filename=README
+  fi
+  if [ ! -f "$path/$filename.md" ]; then
+    text "$RED" "> The $filename file doesn't exist!"
     text "$BLUE" "> Do you want to create one now? (y/n)"
     read -p ">> " create
     if [ "$create" = "y" ]; then
       text "$BLUE" "> Creating one now..."
-      touch "$path/README.md"
-      echo "# Ideas" > "$path/README.md"
-      echo "" >> "$path/README.md"
-      text "$GREEN" "> README.md created!"
+      touch "$path/$filename.md"
+      echo "# Ideas" > "$path/$filename.md"
+      echo "" >> "$path/$filename.md"
+      text "$GREEN" "> $filename.md created!"
     fi
   fi
+}
+
+function preview() {
+  check_remote_path
+  checkfile
+  "$pager" "$path/$filename.md"
 }
 
 function target() {
@@ -188,33 +196,22 @@ function target() {
   elif [ -n "$TARGET_FILE" ]; then
     filename="$TARGET_FILE"
   fi
-	text "$BLUE" "> Summary"
-	read -p ">> " idea
-  if [ ! -f "$path/$filename.md" ]; then
-    text "$RED" "> The $filename file doesn't exist!"
-    text "$BLUE" "> Do you want to create one now? (y/n)"
-    read -p ">> " create
-    if [ "$create" = "y" ]; then
-      text "$BLUE" "> Creating one now..."
-      touch "$path/$filename.md"
-      text "$GREEN" "> $filename.md created!"
-    fi
-  fi
-	"$editor" "$path/$filename.md"
-  git_cmd
 }
 
 function editor() {
+  checkfile
 	text "$BLUE" "> Idea Summary"
 	read -p ">> " idea
-	"$editor" "$path/README.md"
+	"$editor" "$path/$filename.md"
   git_cmd
 }
 
 function eureka() {
   checkfile
   getidea
-  sed -i "2a - $ideacontent" "$path/README.md"
+  echo "$idea"
+  echo "$ideacontent"
+  sed -i "2a - $ideacontent" "$path/$filename.md"
   git_cmd
 }
 
@@ -256,7 +253,7 @@ while [[ "$1" != "" ]]; do
             TARGET_FILE=$2
             workspace
             target
-            shift 2
+            shift 2 || text "$RED" "Target requires another argument!"
             ;;
         -v | --view)
             workspace
