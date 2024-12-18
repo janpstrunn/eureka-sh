@@ -6,25 +6,30 @@ It's a CLI tool that tries to make the experience of jotting ideas down as frict
 
 ## Requirements
 
-- You will need a remote git repository in order to use `eureka.sh`
+- Git is required in order to use `eureka.sh`
+- A remote git repository (optional)
 
 ## Features
 
-- Use an editor to add ideas.
+- Use an editor to add ideas
 - Preview your ideas using a pager
 - Git
 
 ## Extra Features
 
-- Extends git tools from `add`, `commit` and `push` to `fetch` and `pull`.
-- Add ideas without an editor.
-- Not limited to README.md.
-- Creates the README.md if not existing.
+- Extends git tools from `add`, `commit` and `push` to `fetch` and `pull`
+- Add ideas without an editor
+- Not limited to README.md
+- Creates the README.md if not existing
+- Local only
+- Clone remote repository
 
 ## Usage
 
 The first time you use `eureka.sh` it's required to use the `-s` option to setup the configuration. The configuration file lives at `$HOME/.local/share/eureka.conf` by default.
-After setting the configuration, you can use the script with no option to if you want to add an idea without an editor.
+After setting the configuration. At least one argument is required in order to use `eureka.sh`.
+
+You may combine arguments with the `-p` for managing a private repository.
 
 ```
 CLI tool to input and store your ideas without leaving the terminal\n
@@ -40,6 +45,12 @@ Available options:
 --fetch                         - Fetch eureka repo
 --pull                          - Pull eureka repo
 ```
+
+Examples:
+
+1. `eureka.sh -p -s` to set up the private repository configuration.
+2. `eureka.sh -p -t [filename]` to create or edit a file in the private repository. The file name is optional, as it will display the available files and request you enter one.
+3. `eureka.sh -a` to quickly add a new idea to your remote repository without an editor.
 
 ## Installation
 
