@@ -4,9 +4,11 @@ editor=${EDITOR:-vi}
 pager=${PAGER:-less}
 config="$HOME/.local/share/eureka.conf"
 
+PRIVATE_REPO=false
 RED="$(tput setaf 196)"
-BLUE="$(tput setaf 87)"
 GREEN="$(tput setaf 82)"
+BLUE="$(tput setaf 87)"
+ORANGE="$(tput setaf 166)"
 
 function text() {
   local color=$1
@@ -32,42 +34,103 @@ Available options:
 EOF
 }
 
-function setup() {
-	if [ ! -f "$config" ]; then
-    touch "$HOME/.local/share/eureka.conf"
+function private() {
+  PRIVATE_REPO=true
+}
 
-		text "$BLUE" "> Insert your remote repo address (e.g. https://github.com/$USER/eureka/"
-    read -p ">> " irepo
-
-		text "$BLUE" "> Select the directory you want to clone your repo to (e.g. /home/$USER)"
-		text "$BLUE" "> The result will be: /home/$USER/your-repo-name"
-    read -p ">> " clone
-    text "$BLUE" "> Cloning your repo now..."
-    git -C "$clone" clone "$irepo"
-    if [ "$?" -eq 0 ]; then
-      text "$GREEN" "> You repo has been cloned to $clone"
-    else
-      text "$RED" "> An error occured! Try cloning manually"
+function workspace() {
+  if [ "$PRIVATE_REPO" = true ]; then
+    path="$(grep "private" "$config" | awk -F ' = ' '{print $2}')"
+    text "$ORANGE" "Using private repo: $path"
+    if [ "$path" = "" ]; then
+      text "$RED" "The path doesn't exist!"
+      exit 1
     fi
+  else
+    path="$(grep "remote_path" "$config" | awk -F ' = ' '{print $2}')"
+    text "$ORANGE" "Using remote repo: $path"
+    if [ "$path" = "" ]; then
+      text "$RED" "The path doesn't exist!"
+      exit 1
+    fi
+  fi
+}
 
-		while true; do
+function setup() {
+  if [ "$PRIVATE_REPO" = true ]; then
+    setup_private
+  else
+    setup_remote
+  fi
+}
+
+function setup_remote() {
+  if [ ! -f "$config" ]; then
+    text "$RED" "You don't have a configuration file!"
+    text "$BLUE" "Creating one now..."
+    touch "$config" && text "$GREEN" "Config file create at $config"
+    remote_address=$(grep "remote_address" "$config" | awk -F ' = ' '{print $2}')
+    if [ ! -d "$remote_address" ]; then
+      text "$BLUE" "> Insert your remote repo address (e.g. https://github.com/$USER/reponame"
+      read -p ">> " irepo
+    fi
+    path=$(grep "remote_path" "$config" | awk -F ' = ' '{print $2}')
+    if [ ! -d "$path" ]; then
+      text "$BLUE" "> Select the directory you want to clone your repo to (e.g. /home/$USER)"
+      text "$BLUE" "> The result will be: /home/$USER/your-repo-name"
+      read -p ">> " clone
+      text "$BLUE" "> Cloning your repo now..."
+      git -C "$clone" clone "$irepo"
+      if [ "$?" -eq 0 ]; then
+        text "$GREEN" "> You repo has been cloned to $clone"
+      else
+        text "$RED" "> An error occured! Try cloning manually"
+      fi
       text "$BLUE" "> Insert the name of your repo (e.g. eureka)"
       read -p ">> " iname
-      echo "path = $clone/$iname" >> "$config" && text "$GREEN" "> The provided path has been saved to $config"
-      exit 0
-    done
-
-  else
-    text "$GREEN" "> You already have a configuration file!"
-    text "$GREEN" "> Do you want to overwrite it? (y/n):"
-    read -p ">> " overwrite
-    if [ "$overwrite" = "y" ]; then
-      rm "$config"
-      setup
-    else
+      echo "remote_path = $clone/$iname" >> "$config" && text "$GREEN" "> The provided path has been saved to $config"
       exit 0
     fi
+  else
+    path=$(grep "remote_path" "$config" | awk -F ' = ' '{print $2}')
+    text "$GREEN" "> You already have a configuration file set!"
+    text "$BLUE" "> The current path is: $path"
+    text "$BLUE" "> Do you want to overwrite it? (y/n):"
+    read -p ">> " overwrite
+    if [ "$overwrite" = "y" ]; then
+      text "$BLUE" "> Insert the new path (e.g. $HOME/reponame/)"
+      read -p ">> " newpath
+      old_path=$(printf '%s' "$path" | sed 's/[&/\]/\\&/g')
+      new_path=$(printf '%s' "$newpath" | sed 's/[&/\]/\\&/g')
+      sed -i "s|$old_path|$new_path|" "$config" && text "$GREEN" "> The provided path has been saved to $config"
+    fi
 	fi
+}
+
+function setup_private() {
+  path=$(grep "private" "$config" | awk -F ' = ' '{print $2}')
+  if [ ! -d "$path" ]; then
+    text "$RED" "The private path doesn't exist!"
+    text "$BLUE" "> Do you want to add it now? (y/n)"
+    read -p ">> " create
+    if [ "$create" = "y" ]; then
+		text "$BLUE" "> Select the directory you want to use (e.g. /home/$USER/reponame/)"
+    read -p ">> " privaterepo
+    echo "private = $privaterepo" >> "$config" && text "$GREEN" "> The provided path has been saved to $config"
+    fi
+  else
+    text "$GREEN" "> You already have a private path set!"
+    text "$BLUE" "> The current private path is: $path"
+    text "$BLUE" "> Do you want to overwrite it? (y/n):"
+    read -p ">> " overwrite
+    if [ "$overwrite" = "y" ]; then
+    text "$BLUE" "> Insert the new private repo name (e.g. $HOME/reponame)"
+    read -p ">> " newpath
+    old_private=$(printf '%s' "$path" | sed 's/[&/\]/\\&/g')
+    new_private=$(printf '%s' "$newpath" | sed 's/[&/\]/\\&/g')
+    sed -i "s|$old_private|$new_private|" "$config" && text "$GREEN" "> The provided path has been saved to $config"
+    fi
+  fi
 }
 
 function getidea() {
@@ -78,9 +141,14 @@ function getidea() {
 }
 
 function git_cmd() {
-	git -C "$path" add .
-	git -C "$path" commit -m "$idea"
-	git -C "$path" push origin main
+  if [ "$PRIVATE_REPO" = true ]; then
+    git -C "$path" add .
+    git -C "$path" commit -m "$idea"
+  else
+    git -C "$path" add .
+    git -C "$path" commit -m "$idea"
+    git -C "$path" push origin main
+  fi
 }
 
 function pull() {
@@ -91,16 +159,8 @@ function fetch() {
   git -C "$path" fetch origin main
 }
 
-function checkpath() {
-  path=$(grep "path" "$config" | awk -F ' = ' '{print $2}')
-  if [ ! -d "$path" ]; then
-    text "$RED" "The path doesn't exist!"
-    exit 1
-  fi
-}
-
 function preview() {
-  checkpath
+  check_remote_path
   "$pager" "$path/README.md"
 }
 
@@ -120,11 +180,14 @@ function checkfile() {
 }
 
 function target() {
-  checkpath
-	text "$BLUE" "> Available files:"
-  find "$path" -type f -name '*.md' -printf '%P\n' | awk -F. '{print $1}'
-	text "$BLUE" "> Name your file"
-	read -p ">> " filename
+  if [ -z "$TARGET_FILE" ]; then
+    text "$BLUE" "> Available files:"
+    find "$path" -type f -name '*.md' -printf '%P\n' | awk -F. '{print $1}'
+    text "$BLUE" "> Name your file"
+    read -p ">> " filename
+  elif [ -n "$TARGET_FILE" ]; then
+    filename="$TARGET_FILE"
+  fi
 	text "$BLUE" "> Summary"
 	read -p ">> " idea
   if [ ! -f "$path/$filename.md" ]; then
@@ -139,45 +202,75 @@ function target() {
   fi
 	"$editor" "$path/$filename.md"
   git_cmd
-	exit 0
 }
 
 function editor() {
-  checkpath
 	text "$BLUE" "> Idea Summary"
 	read -p ">> " idea
 	"$editor" "$path/README.md"
   git_cmd
-	exit 0
 }
 
 function eureka() {
-  checkpath
   checkfile
   getidea
   sed -i "2a - $ideacontent" "$path/README.md"
   git_cmd
-	exit 0
 }
 
 if [ ! -f "$config" ]; then
   text "$RED" "The configuration file isn't set!"
 fi
 
-if [ "$1" = "" ]; then
-	eureka
-elif [ "$1" = "-v" ] || [ "$1" = "--view" ]; then
-	preview
-elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	help
-elif [ "$1" = "-p" ] || [ "$1" = "--pull" ]; then
-	pull
-elif [ "$1" = "-f" ] || [ "$1" = "--fetch" ]; then
-	fetch
-elif [ "$1" = "-e" ] || [ "$1" = "--edit" ]; then
-	editor
-elif [ "$1" = "-t" ] || [ "$1" = "--target" ]; then
-  target
-elif [ "$1" = "-s" ] || [ "$1" = "--setup" ]; then
-  setup
+if [ "$#" -eq 0 ]; then
+    text "$RED" "Error: No arguments provided."
+    help
 fi
+
+while [[ "$1" != "" ]]; do
+    case "$1" in
+        -e | --editor)
+            workspace
+            editor
+            shift
+            ;;
+        --fetch)
+            workspace
+            fetch
+            shift
+            ;;
+        -s | --setup)
+            setup
+            shift
+            ;;
+        -p | --private)
+            private
+            shift
+            ;;
+        --pull)
+            workspace
+            pull
+            shift
+            ;;
+        -t | --target)
+            TARGET_FILE=$2
+            workspace
+            target
+            shift 2
+            ;;
+        -v | --view)
+            workspace
+            preview
+            shift
+            ;;
+        -h | --help)
+            help
+            exit 0
+            ;;
+        -a | --add)
+            workspace
+            eureka
+            shift
+            ;;
+    esac
+done
