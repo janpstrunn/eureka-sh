@@ -27,15 +27,18 @@ The first time you use `eureka.sh` it's required to use the `-s` option to setup
 After setting the configuration, you can use the script with no option to if you want to add an idea without an editor.
 
 ```
-Usage: $0 [option]
+CLI tool to input and store your ideas without leaving the terminal\n
+Usage: $0 [-p] [option]
 Available options:
--e, --editor                   - Edit ideas using EDITOR (default:vi)
--f, --fetch                    - Fetch eureka repo
--h, --help                     - Display this message and exits
--s, --setup                    - Set configuration up
--p, --pull                     - Pull eureka repo
--t, --target                   - Edit a specified file
--v, --view                     - Preview ideas using PAGER (default:less)
+-a,  --add                      - Add new ideas without an editor
+-e,  --editor                   - Edit ideas using EDITOR (default:vi)
+-h,  --help                     - Display this message and exits
+-s,  --setup                    - Set configuration up
+-p,  --private                  - Private repository modal
+-t,  --target                   - Edit a specified file
+-v,  --view                     - Preview ideas using PAGER (default:less)
+--fetch                         - Fetch eureka repo
+--pull                          - Pull eureka repo
 ```
 
 ## Installation
