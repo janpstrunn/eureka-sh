@@ -16,19 +16,20 @@ function text() {
 }
 
 function help() {
-	printf "
-	CLI tool to input and store your ideas without leaving the terminal\n
-	Usage: $0 [option]
-	Available options:
-  -e, --editor                   - Edit ideas using EDITOR (default:vi)
-	-f, --fetch                    - Fetch eureka repo
-	-h, --help                     - Display this message and exits
-	-s, --setup                    - Set configuration up
-	-p, --pull                     - Pull eureka repo
-  -t, --target                   - Edit a specified file
-  -v, --view                     - Preview ideas using PAGER (default:less)
-	"
-	exit 0
+cat << EOF
+CLI tool to input and store your ideas without leaving the terminal\n
+Usage: $0 [-p] [option]
+Available options:
+-a,  --add                      - Add new ideas without an editor
+-e,  --editor                   - Edit ideas using EDITOR (default:vi)
+-h,  --help                     - Display this message and exits
+-s,  --setup                    - Set configuration up
+-p,  --private                  - Private repository modal
+-t,  --target                   - Edit a specified file
+-v,  --view                     - Preview ideas using PAGER (default:less)
+--fetch                         - Fetch eureka repo
+--pull                          - Pull eureka repo
+EOF
 }
 
 function setup() {
