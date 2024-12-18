@@ -46,19 +46,20 @@ Available options:
 --pull                                    - Pull eureka repo
 ```
 
-Examples:
+**Examples:**
 
 1. `eureka.sh -p -s` to set up the private repository configuration.
 2. `eureka.sh -p -t [filename] -e` to create or edit a file in the private repository. The file name is optional, as it will display the available files and request you enter one.
 3. `eureka.sh -a` to quickly add a new idea to your remote repository without an editor.
 
-Notes:
+**Important:**
 
-- The arguments have the following priority: -p, -t, others
+- The arguments have the following priority: `-p`, `-t`, others
+- To use `-a`, ensure the desired file has at least 2 lines, or it will **fail**. It's only an issue, when a new file is created using `target` and the `editor`, leaving the file with one line.
 
 ## Installation
 
-Make sure to add the script to your $PATH for convenience.
+Make sure to add the script to your `$PATH` for convenience.
 
 ```
 git clone https://github.com/janpstrunn/eureka-sh
