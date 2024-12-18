@@ -187,7 +187,7 @@ function preview() {
 }
 
 function target() {
-  if [ -z "$TARGET_FILE" ]; then
+  if [ "$TARGET_FILE" = "." ]; then
     text "$BLUE" "> Available files:"
     find "$path" -type f -name '*.md' -printf '%P\n' | awk -F. '{print $1}'
     text "$BLUE" "> Name your file"
