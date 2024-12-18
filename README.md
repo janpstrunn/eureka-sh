@@ -55,6 +55,7 @@ Available options:
 **Important:**
 
 - The arguments have the following priority: `-p`, `-t`, others
+- If you don't want to specific a filename when using `target`, you will need to insert "." (dot). Example: `-t . -a`
 - To use `-a`, ensure the desired file has at least 2 lines, or it will **fail**. It's only an issue, when a new file is created using `target` and the `editor`, leaving the file with one line.
 
 ## Installation
