@@ -29,7 +29,7 @@ It's a CLI tool that tries to make the experience of jotting ideas down as frict
 The first time you use `eureka.sh` it's required to use the `-s` option to setup the configuration. The configuration file lives at `$HOME/.local/share/eureka.conf` by default.
 After setting the configuration. At least one argument is required in order to use `eureka.sh`.
 
-You may combine arguments with the `-p` for managing a private repository.
+You may combine arguments with the `-p` for managing a private repository (do not pull changes).
 
 ```
 CLI tool to input and store your ideas without leaving the terminal\n
@@ -54,6 +54,7 @@ Available options:
 
 **Important:**
 
+- Private repositories do not pull changes
 - The arguments have the following priority: `-p`, `-t`, others
 - If you don't want to specific a filename when using `target`, you will need to insert "." (dot). Example: `-t . -a`
 - To use `-a`, ensure the desired file has at least 2 lines, or it will **fail**. It's only an issue, when a new file is created using `target` and the `editor`, leaving the file with one line.
