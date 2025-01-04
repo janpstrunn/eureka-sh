@@ -181,7 +181,6 @@ function checkfile() {
 }
 
 function preview() {
-  check_remote_path
   checkfile
   "$pager" "$path/$filename.md"
 }
