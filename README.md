@@ -32,16 +32,16 @@ After setting the configuration. At least one argument is required in order to u
 You may combine arguments with the `-p` for managing a private repository (do not pull changes).
 
 ```
-CLI tool to input and store your ideas without leaving the terminal\n
 Usage: $0 [-p] [-t] [filename] [option]
 Available options:
--a,  --add                                - Add new ideas without an editor
--e,  --editor                             - Edit ideas using EDITOR (default:vi)
--h,  --help                               - Display this message and exits
--s,  --setup                              - Set configuration up
--p,  --private [option]                   - Private repository modal
--t,  --target  [filename] [option]        - Edit a specified file
--v,  --view                               - Preview ideas using PAGER (default:less)
+-a, --add                                - Add new ideas without an editor
+-c, --config                             - View config file
+-e, --editor                             - Edit ideas using EDITOR (default:vi)
+-h, --help                               - Display this message and exits
+-s, --setup                              - Set configuration up
+-p, --private [option]                   - Private repository modal
+-t, --target  [filename] [option]        - Edit a specified file
+-v, --view                               - Preview ideas using PAGER (default:less)
 --fetch                                   - Fetch eureka repo
 --pull                                    - Pull eureka repo
 ```
