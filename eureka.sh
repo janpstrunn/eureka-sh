@@ -18,16 +18,17 @@ function text() {
 }
 
 function help() {
-cat << EOF
+  cat <<EOF
 Usage: $0 [-p] [-t] [filename] [option]
 Available options:
--a,  --add                                - Add new ideas without an editor
--e,  --editor                             - Edit ideas using EDITOR (default:vi)
--h,  --help                               - Display this message and exits
--s,  --setup                              - Set configuration up
--p,  --private [option]                   - Private repository modal
--t,  --target  [filename] [option]        - Edit a specified file
--v,  --view                               - Preview ideas using PAGER (default:less)
+-a, --add                                - Add new ideas without an editor
+-c, --config                             - View config file
+-e, --editor                             - Edit ideas using EDITOR (default:vi)
+-h, --help                               - Display this message and exits
+-s, --setup                              - Set configuration up
+-p, --private [option]                   - Private repository modal
+-t, --target  [filename] [option]        - Edit a specified file
+-v, --view                               - Preview ideas using PAGER (default:less)
 --fetch                                   - Fetch eureka repo
 --pull                                    - Pull eureka repo
 EOF
@@ -91,7 +92,7 @@ function setup_remote() {
       fi
       text "$BLUE" "> Insert the name of your repo (e.g. eureka)"
       read -p ">> " iname
-      echo "remote_path = $clone/$iname" >> "$config" && text "$GREEN" "> The provided path has been saved to $config"
+      echo "remote_path = $clone/$iname" >>"$config" && text "$GREEN" "> The provided path has been saved to $config"
       exit 0
     fi
   else
@@ -107,7 +108,7 @@ function setup_remote() {
       new_path=$(printf '%s' "$newpath" | sed 's/[&/\]/\\&/g')
       sed -i "s|$old_path|$new_path|" "$config" && text "$GREEN" "> The provided path has been saved to $config"
     fi
-	fi
+  fi
 }
 
 function setup_private() {
@@ -117,9 +118,9 @@ function setup_private() {
     text "$BLUE" "> Do you want to add it now? (y/n)"
     read -p ">> " create
     if [ "$create" = "y" ]; then
-		text "$BLUE" "> Select the directory you want to use (e.g. /home/$USER/reponame/)"
-    read -p ">> " privaterepo
-    echo "private = $privaterepo" >> "$config" && text "$GREEN" "> The provided path has been saved to $config"
+      text "$BLUE" "> Select the directory you want to use (e.g. /home/$USER/reponame/)"
+      read -p ">> " privaterepo
+      echo "private = $privaterepo" >>"$config" && text "$GREEN" "> The provided path has been saved to $config"
     fi
   else
     text "$GREEN" "> You already have a private path set!"
@@ -127,19 +128,19 @@ function setup_private() {
     text "$BLUE" "> Do you want to overwrite it? (y/n):"
     read -p ">> " overwrite
     if [ "$overwrite" = "y" ]; then
-    text "$BLUE" "> Insert the new private repo name (e.g. $HOME/reponame)"
-    read -p ">> " newpath
-    old_private=$(printf '%s' "$path" | sed 's/[&/\]/\\&/g')
-    new_private=$(printf '%s' "$newpath" | sed 's/[&/\]/\\&/g')
-    sed -i "s|$old_private|$new_private|" "$config" && text "$GREEN" "> The provided path has been saved to $config"
+      text "$BLUE" "> Insert the new private repo name (e.g. $HOME/reponame)"
+      read -p ">> " newpath
+      old_private=$(printf '%s' "$path" | sed 's/[&/\]/\\&/g')
+      new_private=$(printf '%s' "$newpath" | sed 's/[&/\]/\\&/g')
+      sed -i "s|$old_private|$new_private|" "$config" && text "$GREEN" "> The provided path has been saved to $config"
     fi
   fi
 }
 
 function getidea() {
-	text "$BLUE" "> Idea Summary"
-	read -p ">> " idea
-	text "$BLUE" "> Idea Content"
+  text "$BLUE" "> Idea Summary"
+  read -p ">> " idea
+  text "$BLUE" "> Idea Content"
   read -p ">> " ideacontent
 }
 
@@ -173,8 +174,8 @@ function checkfile() {
     if [ "$create" = "y" ]; then
       text "$BLUE" "> Creating one now..."
       touch "$path/$filename.md"
-      echo "# Ideas" > "$path/$filename.md"
-      echo "" >> "$path/$filename.md"
+      echo "# Ideas" >"$path/$filename.md"
+      echo "" >>"$path/$filename.md"
       text "$GREEN" "> $filename.md created!"
     fi
   fi
@@ -198,9 +199,9 @@ function target() {
 
 function editor() {
   checkfile
-	text "$BLUE" "> Idea Summary"
-	read -p ">> " idea
-	"$editor" "$path/$filename.md"
+  text "$BLUE" "> Idea Summary"
+  read -p ">> " idea
+  "$editor" "$path/$filename.md"
   git_cmd
 }
 
@@ -213,59 +214,67 @@ function eureka() {
   git_cmd
 }
 
+function config() {
+  cat $config
+}
+
 if [ ! -f "$config" ]; then
   text "$RED" "The configuration file isn't set!"
 fi
 
 if [ "$#" -eq 0 ]; then
-    text "$RED" "Error: No arguments provided."
-    help
+  text "$RED" "Error: No arguments provided."
+  help
 fi
 
 while [[ "$1" != "" ]]; do
-    case "$1" in
-        -e | --editor)
-            workspace
-            editor
-            shift
-            ;;
-        --fetch)
-            workspace
-            fetch
-            shift
-            ;;
-        -s | --setup)
-            setup
-            shift
-            ;;
-        -p | --private)
-            private
-            shift
-            ;;
-        --pull)
-            workspace
-            pull
-            shift
-            ;;
-        -t | --target)
-            TARGET_FILE=$2
-            workspace
-            target
-            shift 2 || text "$RED" "Target requires another argument!"
-            ;;
-        -v | --view)
-            workspace
-            preview
-            shift
-            ;;
-        -h | --help)
-            help
-            exit 0
-            ;;
-        -a | --add)
-            workspace
-            eureka
-            shift
-            ;;
-    esac
+  case "$1" in
+  -e | --editor)
+    workspace
+    editor
+    shift
+    ;;
+  --fetch)
+    workspace
+    fetch
+    shift
+    ;;
+  -s | --setup)
+    setup
+    shift
+    ;;
+  -p | --private)
+    private
+    shift
+    ;;
+  --pull)
+    workspace
+    pull
+    shift
+    ;;
+  -t | --target)
+    TARGET_FILE=$2
+    workspace
+    target
+    shift 2 || text "$RED" "Target requires another argument!"
+    ;;
+  -v | --view)
+    workspace
+    preview
+    shift
+    ;;
+  -h | --help)
+    help
+    exit 0
+    ;;
+  -a | --add)
+    workspace
+    eureka
+    shift
+    ;;
+  -c | --config)
+    config
+    exit
+    ;;
+  esac
 done
