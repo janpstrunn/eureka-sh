@@ -74,3 +74,7 @@ Tip: Set an alias for `eureka.sh`
 ## Notes
 
 This script has been only tested in a Linux Machine.
+
+## License
+
+This repository is licensed under the MIT License, a very permissive license that allows you to use, modify, copy, distribute and more.
